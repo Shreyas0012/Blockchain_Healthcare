@@ -1,58 +1,48 @@
-# MediChain Intelligence: "India-Ready" Healthcare Platform
+# MediChain Intelligence: National ABDM Standard
 
-> A production-ready, blockchain-backed healthcare coordination system designed specifically for the Indian context. 
+> A production-ready, blockchain-backed healthcare coordination system designed for the Indian ABDM ecosystem. 
 
 ## 🇮🇳 The Vision
-MediChain removes the technical barrier of Web3 for patients while maintaining the security of decentralized storage. It uses an **Aadhaar-Centric Identity Model** and a **Hospital Signer Architecture** to handle transactions silently on behalf of users.
+MediChain bridges the gap between Web3 security and public health accessibility. It uses an **Aadhaar-Centric Identity Model** and **Real-Time MetaMask Synchronization** to offer zero-friction medical data portability.
 
 ---
 
 ## 🚀 One-Click Setup (Windows)
-Run the following command in your terminal to initialize the entire project:
+1. Ensure you have **Node.js**, **Python 3.10+**, and **MetaMask** installed.
+2. Run the initializer:
 ```powershell
 .\setup_all.ps1
 ```
 
 ---
 
-## 🔑 Role-Based Identity
-| Role | Primary Identity | Verification Method | Governance |
+## 🔐 Production Security & RBAC
+| Role | Identity | Verification | Access Level |
 | :--- | :--- | :--- | :--- |
-| **Patient** | Aadhaar Number | 6-digit Secure PIN | Self-Service |
-| **Doctor** | Professional Reg ID | Certification Hash | Practical Access |
-| **Admin** | Ethereum Wallet | MetaMask (EIP-712) | System Whitelist |
+| **Patient** | Aadhaar Hash | 6-Digit PIN | Full Record Ownership |
+| **Surgeon** | Reg ID | MetaMask Sig | Full Clinical Entry |
+| **Pharmacist** | Reg ID | MetaMask Sig | Prescription-Only (Read) |
+| **Admin** | Wallet Address | Contract Owner | Global Whitelisting |
 
 ---
 
-## 🛠 Architecture & Workflow
+## 🛠 Technical Architecture
 
-### 1. Hybrid Storage
-- **Clinical Data**: AES-256 encrypted and stored on **IPFS**.
-- **Audit Trail**: Metadata (CIDs, timestamps, signatures) stored on **Ethereum Sepolia**.
-- **Privacy**: No PII (Personally Identifiable Information) ever touches the blockchain; only secure hashes.
+### 1. Hybrid Ledger Model
+- **Storage**: Medical records are AES-256 encrypted and pinned to **IPFS**.
+- **Audit**: Only SHA-256 hashes and permission states live on **Ethereum Sepolia**.
+- **Privacy**: Zero PII resides on-chain.
 
-### 2. QR-Based Approval (Silent Blockchain)
-- **Step 1**: Doctor scans Patient's QR code (containing Aadhaar hash).
-- **Step 2**: Backend signals a "Request" event to the Patient's Dashboard.
-- **Step 3**: Patient approves via the UI (Simulated Biometrics/PIN).
-- **Step 4**: Hospital Signer executes `grantAccess` on-chain.
-- **Step 5**: Doctor unlocks and decrypts the IPFS records.
+### 2. Gas Optimization
+The system uses a custom **EVM Storage-Packed Contract** to minimize transaction costs:
+- **Contract**: `0x9D54eE261aA4f574D6e2A9CDD1d02eBA5A1C9B13` (Sepolia)
 
 ---
 
-## 📦 Deployment (Docker)
-For a production-like containerized environment, use Docker Compose:
-```bash
-docker-compose up --build
-```
-
----
-
-## 🧪 Simulation Data
-Use these credentials for testing the platform:
+## 🧪 Credentials for Demo
 - **Patient**: Aadhaar `123456789012` | PIN `111111`
-- **Doctor**: Reg ID `DMC-82741-INDIA` | PIN `222222`
-- **Admin**: Connect MetaMask (Requires Sepolia ETH for whitelisting actual doctors).
+- **Doctor**: ID `DMC-82741-INDIA` | PIN `222222` (Requires MetaMask)
+- **Admin**: Connect MetaMask to manage the Hospital node.
 
 ---
-**Built with FastAPI, React, Solidity, and Framer Motion.**
+**Built for the Smart India Hackathon (SIH) Standards.**
