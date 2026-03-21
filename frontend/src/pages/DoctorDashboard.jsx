@@ -29,7 +29,15 @@ export default function DoctorDashboard({ user, activeTab }) {
 
         setStatus({ type: 'info', message: 'Synchronizing Hospital Whitelist via API...' });
         console.log(`[WHITELIST] Synchronizing address: ${address}`);
-        await whitelistDoctor(address);
+        const res = await whitelistDoctor(address);
+
+        if (!res || !res.success) {
+            throw new Error("Hospital failed to whitelist your wallet. Check backend logs.");
+        }
+
+        // Mandatory wait for blockchain state propagation across RPC nodes
+        setStatus({ type: 'info', message: 'Finalising Blockchain synchronization (3s)...' });
+        await new Promise(r => setTimeout(r, 3000));
 
         const abi = ["function requestAccess(bytes32 _patientHash) public"];
         const contract = new ethers.Contract(import.meta.env.VITE_CONTRACT_ADDRESS, abi, signer);
@@ -121,7 +129,7 @@ export default function DoctorDashboard({ user, activeTab }) {
             activeAddress = await executeMetaMaskRequest(patientHash);
         } catch (err) {
             console.error(err);
-            setError("MetaMask Contract Request Failed or Rejected.");
+            setError(err.message || "MetaMask Contract Request Failed or Rejected.");
             setStatus({ type: '', message: '' });
             return;
         }

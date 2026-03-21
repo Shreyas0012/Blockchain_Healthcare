@@ -61,5 +61,38 @@ class IPFSService:
         current_hash = hashlib.sha256(file_bytes).hexdigest()
         return current_hash == original_hash
 
+    def download_record(self, cid: str) -> dict:
+        """Download and decrypt a record from IPFS."""
+        if not cid or cid.startswith("sim_"):
+            return {"error": "Invalid or simulated CID"}
+
+        try:
+            # 1. Download from Pinata Gateway
+            url = f"{self.gateway}{cid}"
+            print(f"[IPFS] Downloading from Gateway: {url}")
+            resp = requests.get(url, timeout=30)
+            resp.raise_for_status()
+            combined = resp.content
+
+            # 2. Split by separator
+            parts = combined.split(b"|||SEPARATOR|||")
+            if len(parts) < 2:
+                # If no separator, the record might be old/unencrypted or just a single file
+                return {"error": "Malformed encrypted record"}
+
+            encrypted_file = parts[0]
+            encrypted_meta = parts[1]
+
+            # 3. Decrypt
+            decrypted_meta_json = encryption_service.decrypt(encrypted_meta).decode("utf-8")
+            metadata = json.loads(decrypted_meta_json)
+            
+            # Note: We don't decrypt the file here unless requested, 
+            # as most dashboard data is in the metadata dict (vitals).
+            return metadata.get("metadata", {})
+        except Exception as e:
+            print(f"[IPFS] Download/Decrypt failed for {cid}: {e}")
+            return {"error": str(e)}
+
 
 ipfs_service = IPFSService()

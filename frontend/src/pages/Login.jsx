@@ -27,7 +27,8 @@ export default function Login({ onLogin }) {
         const timeoutId = setTimeout(() => abortController.abort(), 8000); // 8s timeout
 
         try {
-            const resp = await fetch('http://127.0.0.1:8080/auth/login', {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+            const resp = await fetch(`${baseUrl}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ aadhaar: idValue, pin, role: activeTab }),

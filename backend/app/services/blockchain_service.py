@@ -50,6 +50,9 @@ def send_transaction(fn_name, *args):
     
     # Wait for receipt
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+    if receipt.status == 0:
+        raise Exception(f"Blockchain Transaction Reverted! Hash: {tx_hash.hex()}")
+    
     print(f"[BLOCKCHAIN] TX Confirmed in block {receipt.blockNumber}")
     
     return {
@@ -113,7 +116,16 @@ def get_records(patient_hash_hex):
     """
     try:
         patient_hash = bytes.fromhex(patient_hash_hex.replace("0x", ""))
-        return contract.functions.getPatientRecords(patient_hash).call()
+        # Specify 'from' address and parse the list of structs into dictionaries
+        raw_recs = contract.functions.getPatientRecords(patient_hash).call({'from': hospital_account.address})
+        
+        formatted_recs = []
+        for r in raw_recs:
+            formatted_recs.append({
+                "timestamp": r[0],
+                "ipfs_hash": r[1]
+            })
+        return formatted_recs
     except Exception as e:
         print(f"[BLOCKCHAIN] Warning: Could not fetch records (likely access denied): {e}")
         return []

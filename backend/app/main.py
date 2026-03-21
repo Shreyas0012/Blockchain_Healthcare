@@ -168,6 +168,10 @@ async def approve_request(data: dict):
     """
     patient_hash = data.get("patient_hash")
     doctor_addr = data.get("doctor_address")
+
+    if not patient_hash or not doctor_addr:
+        print(f"[ERROR] Missing data in approve_request: patient={patient_hash}, doctor={doctor_addr}")
+        raise HTTPException(status_code=400, detail="Missing patient_hash or doctor_address")
     
     # Sign transaction from Hospital Signer
     res = blockchain_service.approve_access_for_doctor(patient_hash, doctor_addr)
